@@ -137,12 +137,12 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
                 tag_d["id"] = element.get("id")
                 if child.get("v").find(";") >= 0:
                     if child.get("k") == "addr:postcode":
-                        tag_d["value"] = child.get("v").replace(" ", "")
+                        tag_d["value"] = child.get("v") #.replace(" ", "")
                     else:    
                         tag_d["value"] = remove_diacritics(child.get("v").replace(";", "_"))  
                 else:
                     if child.get("k") == "addr:postcode":
-                        tag_d["value"] = child.get("v").replace(" ", "")
+                        tag_d["value"] = child.get("v") #.replace(" ", "")
                     else:
                         tag_d["value"] = remove_diacritics((child.get("v")))    
                 
@@ -193,12 +193,12 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
                 tag_d["id"] = element.get("id")
                 if child.get("v").find(";") >= 0:
                     if child.get("k") == "addr:postcode":
-                        tag_d["value"] = child.get("v").replace(" ", "")
+                        tag_d["value"] = child.get("v") #.replace(" ", "")
                     else:    
                         tag_d["value"] = remove_diacritics(child.get("v").replace(";", "_"))  
                 else:
                     if child.get("k") == "addr:postcode":
-                        tag_d["value"] = child.get("v").replace(" ", "")
+                        tag_d["value"] = child.get("v") #.replace(" ", "")
                     else:
                         tag_d["value"] = remove_diacritics((child.get("v")))
                         
