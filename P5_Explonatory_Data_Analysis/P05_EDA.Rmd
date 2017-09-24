@@ -1,0 +1,543 @@
+# Udacity Data Analyst Nanodegree
+# P05_Explonatory Data Analysis
+  Martin Rypar
+========================================================
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load all of the packages that you end up using in your analysis in this code
+# chunk.
+
+# Notice that the parameter "echo" was set to FALSE for this code chunk. This
+# prevents the code from displaying in the knitted HTML output. You should set
+# echo=FALSE for all code chunks in your file, unless it makes sense for your
+# report to show the code that generated a particular plot.
+
+# The other parameters for "message" and "warning" should also be set to FALSE
+# for other code chunks once you have verified that each plot comes out as you
+# want it to. This will clean up the flow of your report.
+
+library(ggplot2)
+library(knitr)
+library(dplyr)
+library(GGally)
+library(RColorBrewer)
+
+```
+
+```{r echo=FALSE, Load_the_Data}
+
+setwd("C:/Users/mrecl/Desktop/Exploratory_Data_Analysis/project/P5_Explonatory_Data_Analysis")
+data <- read.csv("P5_UCI_Credit_Card_Dataset.csv", sep = ",")
+
+```
+
+# UCI Credit Card Dataset
+
+> This dataset contains information on default payments, demographic factors, 
+credit data, history of payment, and bill statements of credit card clients in 
+Taiwan from April 2005 to September 2005. The dataset was downloaded from https://www.kaggle.com/uciml/default-of-credit-card-clients-dataset and further
+informations are avaliable in enclosed P05_Dataset_Description.txt file.
+
+# Preparation and getting some basic intuition of dataset
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Intuition}
+# convert gender
+for (i in 1:length(data$SEX))
+  if (data$SEX[i] == 1){
+    data$SEX[i] = "male"
+  } else if (data$SEX[i] == 2){
+    data$SEX[i] = "female"
+  } else
+    data$SEX[i] = NULL
+
+# convert education
+for (i in 1:length(data$EDUCATION))
+  if (data$EDUCATION[i] == 1){
+    data$EDUCATION[i] = "graduate school"
+  } else if (data$EDUCATION[i] == 2){
+    data$EDUCATION[i] = "university"
+  } else if (data$EDUCATION[i] == 3){
+    data$EDUCATION[i] = "high school"
+  } else {
+    data$EDUCATION[i] = "others"
+  }
+
+# convert marriage
+for (i in 1:length(data$MARRIAGE))
+  if (data$MARRIAGE[i] == 1){
+    data$MARRIAGE[i] = "married"
+  } else if (data$MARRIAGE[i] == 2){
+    data$MARRIAGE[i] = "single"
+  } else if (data$MARRIAGE[i] == 3){
+    data$MARRIAGE[i] = "divorced"
+  } else{
+    data$MARRIAGE[i] = "others"
+  }
+
+names(data)[25] = "default"
+
+data$default_b <- data$default
+# convert default
+for (i in 1:length(data$default))
+  if (data$default[i] == 1){
+    data$default[i] = "yes"
+  } else if (data$default[i] == 0){
+    data$default[i] = "no"
+  } else
+    data$default[i] = NULL
+
+# convert PAY_0 - PAY_6
+names = names(data)[7:12]
+for (i in c(7:12))
+  for (j in 1:length(data$PAY_0))
+    if (data[[i]][[j]] == -2){
+      data[[i]][[j]] = "no consumption"
+    } else if (data[[i]][[j]] == -1){
+      data[[i]][[j]] = "paid"
+    } else if (data[[i]][[j]] == 0){
+      data[[i]][[j]] = "revolving"
+    } else if (data[[i]][[j]] == 1){
+      data[[i]][[j]] = "1m"
+    } else if (data[[i]][[j]] == 2){
+      data[[i]][[j]] = "2m"
+    } else if (data[[i]][[j]] == 3){
+      data[[i]][[j]] = "3m"
+    } else if (data[[i]][[j]] == 4){
+      data[[i]][[j]] = "4m"
+    } else if (data[[i]][[j]] == 5){
+      data[[i]][[j]] = "5m"
+    } else if (data[[i]][[j]] == 6){
+      data[[i]][[j]] = "6m"
+    } else if (data[[i]][[j]] == 7){
+      data[[i]][[j]] = "7m"
+    } else if (data[[i]][[j]] == 8){
+      data[[i]][[j]] = "8m"
+    } else{
+      data[[i]][[j]] = "NA"
+    }
+
+# weighted averages as a new variables
+data$BILL_AMT <- (6*data$BILL_AMT1 + 5*data$BILL_AMT2 + 4*data$BILL_AMT3 + 3*data$BILL_AMT4 + 2*data$BILL_AMT5 + data$BILL_AMT6)/(21)
+data$PAY_AMT <- (6*data$PAY_AMT1 + 5*data$PAY_AMT2 + 4*data$PAY_AMT3 + 3*data$PAY_AMT4 + 2*data$PAY_AMT5 + data$PAY_AMT6)/(21)
+
+str(data)
+summary(data)
+
+```
+
+# Univariate Plots Section
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Univariate_Plots}
+
+ggplot(aes(default), data = data) +
+  stat_count(aes(fill = default)) +
+  scale_y_continuous(breaks = seq(0, 30000, 2000))
+     
+ggplot(aes(SEX), data = data) +
+  stat_count(aes(fill = SEX))
+
+ggplot(aes(EDUCATION), data = data) + 
+  stat_count(aes(fill = EDUCATION))
+
+ggplot(aes(MARRIAGE), data = data) + 
+  stat_count(aes(fill = MARRIAGE))
+
+ggplot(aes(PAY_0), data = data) +
+  geom_bar(stat = "count") +
+  scale_x_discrete(limits = c("no consumption", "revolving", "paid", "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m")) +
+  scale_y_continuous(breaks = seq(0, 15000, 1000)) +
+  xlab("Repayment status")
+
+# QUANTITATIVE VARIABLES
+
+ggplot(aes(AGE), data = data) + 
+  geom_density(aes(color = default, fill = default), stat = "bin", binwidth = 5) +
+  scale_x_continuous(breaks = seq(20, 80, 5)) 
+
+ggplot(aes(AGE), data = data) + 
+  geom_density(aes(color = default, fill = default), stat = "bin", binwidth = 5) +
+  scale_y_log10()
+  
+ggplot(aes(AGE), data = data) +
+  geom_density(aes(color = default, fill = default), position = "fill", stat = "bin", binwidth = 5) +
+  scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+  scale_x_continuous(breaks = seq(20, 80, 5)) +
+  geom_hline(yintercept = c(0.7, 0.8), linetype = 5)
+
+ggplot(aes(LIMIT_BAL), data = data) +
+  geom_histogram(binwidth = 25000) +
+  scale_x_continuous(breaks = seq(0, 1000000, 50000), limits = c(0, quantile(data$LIMIT_BAL, 0.99)))
+
+ggplot(aes(LIMIT_BAL), data = data) +
+  geom_histogram() +
+  scale_x_log10()
+
+ggplot(aes(BILL_AMT), data = data) +
+  geom_histogram(binwidth = 25000) +
+  scale_x_continuous(breaks = seq(0, 500000, 50000), limits = c(0, quantile(data$BILL_AMT, 0.99)))
+
+ggplot(aes(BILL_AMT), data = data) +
+  geom_histogram() +
+  scale_x_log10()
+
+ggplot(aes(PAY_AMT), data = data) +
+  geom_freqpoly(bins = 10) +
+  scale_x_continuous(breaks = seq(0, 100000, 5000), limits = c(0, quantile(data$PAY_AMT, 0.99)))
+
+ggplot(aes(PAY_AMT), data = data) +
+  geom_freqpoly() +
+  scale_x_log10()
+
+```
+
+# Univariate Analysis
+
+> The dataset consists of 30 000 observations and 25 variables (age, sex,
+education, marriage, amount of given credit, repayment status 1-6 months back, 
+amount of bill statement 1-6 months back, 
+amount of previous payments 1-6 months back, default) where I am mainly
+interested in how is default variable (customer will not be able to pay 
+his/her debts in next month) affected by other variables.
+Closer description can be found in enclosed P05_Description_Dataset.txt file.
+
+> First I recoded some of the categorical variables 
+from their previous numerical 
+coding (dummy variables) to more explicit and easy to read naming in order to
+have more clear plot descriptions.
+
+> Next I created two new variables:
+From amount of bill statements for last 6 months (BILL_AMT) were calculated 
+weighted averages for each customer and similarly for amount of previous 
+payments (PAY_AMT) for last 6 months.
+
+### Categorical Variables
+* ~22% is general proportion of defaulted customers within dataset
+* More than a half of the dataset consists of females  
+* The most usual customer has university degree 
+* More than a half of customers are single
+* The majority of people use revolving credit to pay debts
+
+### Quantitative Variables
+* Age as skewed distribution (long-tail) with majority of customers
+within 25-40 years old (older people do not use the credit cards and they prefer
+cash in most of the cases), median age 34 and proportion of defaulted customers
+remains between 0.2 and 0.3 with an exception of customers older than 70 years,
+where is huge gap and approx. only a half of people around 75 y.o. paid 
+their debts.
+* LIMIT_BAL (amount of given credit) variable seems to have roughly 
+skewed distribution
+* Average amount of bill statement (BILL_AMT) has the skewed distribution
+* The most common average of previous payments (PAY_AMT) is ~ 2000 NT dollars
+and again is of skewed distribution
+
+
+# Bivariate Plots Section
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Bivariate_Plots}
+
+ggplot(aes(SEX), data = data) +
+  geom_bar(aes(fill = default), position = "fill", stat = "count") +
+  scale_y_continuous(breaks = seq(0,1,0.1))
+
+# as others and unknown are very small samples and thus there is no relevant signal from them I decided to remove them
+ggplot(aes(EDUCATION), data = subset(data, EDUCATION != "others")) +
+  geom_bar(aes(fill = default), position = "fill", stat = "count") +
+  scale_y_continuous(breaks = seq(0, 1, 0.1))
+
+# as others is very small sample and thus there is no relevant signal from it I decided to remove it
+ggplot(aes(MARRIAGE), data = subset(data, MARRIAGE != "others")) +
+  geom_bar(aes(fill = default), position = "fill", stat = "count") +
+  scale_y_continuous(breaks = seq(0,1,0.1))
+
+ggplot(aes(PAY_0), data = data) +
+  geom_bar(aes(color = default, fill = default), stat = "count", position = "fill") +
+  scale_x_discrete(limits = c("no consumption", "revolving", "paid", "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m")) +
+  scale_y_continuous(breaks = seq(0, 1, 0.1))
+
+ggplot(aes(PAY_2), data = data) +
+  geom_bar(aes(color = default, fill = default), stat = "count", position = "fill") +
+  scale_x_discrete(limits = c("no consumption", "revolving", "paid", "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m")) +
+  scale_y_continuous(breaks = seq(0, 1, 0.1))
+
+ggplot(aes(PAY_3), data = data) +
+  geom_bar(aes(color = default, fill = default), stat = "count", position = "fill") +
+  scale_x_discrete(limits = c("no consumption", "revolving", "paid", "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m")) +
+  scale_y_continuous(breaks = seq(0, 1, 0.1))
+
+ggplot(aes(default, LIMIT_BAL), data = data) +
+  geom_boxplot(aes(color = default)) +
+  # ylim(0, quantile(data$LIMIT_BAL, 0.95)) +
+  scale_y_continuous(breaks = seq(0, 1000000, 50000))
+
+ggplot(aes(default, BILL_AMT), data = data) +
+  geom_boxplot(aes(color = default)) +
+  ylim(0, quantile(data$BILL_AMT, 0.95))
+  
+ggplot(aes(default, PAY_AMT), data = data) +
+  geom_boxplot(aes(color = default)) +
+  ylim(0, quantile(data$PAY_AMT, 0.95))
+
+ggplot(aes(SEX, PAY_AMT), data = data) +
+  geom_boxplot(aes(color = SEX)) +
+  scale_y_continuous(limits = c(0, quantile(data$PAY_AMT, 0.95)), breaks = seq(0, 50000, 5000))
+
+ggplot(aes(PAY_0), data = data) +
+  geom_bar(aes(fill = SEX), position = "fill") +
+  scale_x_discrete(limits = c("no consumption", "revolving", "paid", "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m"))
+
+ggplot(aes(PAY_2), data = data) +
+  geom_bar(aes(fill = SEX), position = "fill") +
+  scale_x_discrete(limits = c("no consumption", "revolving", "paid", "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m"))
+
+ggplot(aes(PAY_3), data = data) +
+  geom_bar(aes(fill = SEX), position = "fill") +
+  scale_x_discrete(limits = c("no consumption", "revolving", "paid", "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m"))
+
+ggplot(aes(EDUCATION), data = subset(data, EDUCATION != "others")) +
+  geom_bar(aes(fill = PAY_0), position = "fill") +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(aes(MARRIAGE), data = subset(data, MARRIAGE != "others")) +
+  geom_bar(aes(fill = PAY_0), position = "fill") +
+  scale_fill_brewer(palette = "Spectral") +
+  facet_wrap(~ EDUCATION)
+
+# theme_set(theme_minimal(20))
+# set.seed(1836)
+# data.subset <- data[, c(2:8, 25:27)]
+# names(data.subset)
+# ggpairs(data.subset[sample.int(nrow(data.subset), 1000), ])
+
+```
+
+# Bivariate Analysis
+
+* The proportion of
+defaulted customers per sex is slightly bigger within males
+* The proportion of defaulted 
+customers per education seems to be highest within customers who completed only 
+high school (but universtity graduates close enough)
+* The biggest proportion of defaults showed divorced customers
+* The most significant change in proportion of defaulted and non defaulted
+customers repeatedly occured between 1 month delay in payment and 2 months delay
+in payment - which draggs my attention
+* LIMIT_BAL (amount of given credit) variable has higher median within non
+defaulted customers
+* Average amount of bill statement (BILL_AMT) do not shows any significant
+differencies within people who default and those who do not
+* As expected average amount of previous payments (PAY_AMT) has higher median
+within people who do not default but with a higher variance
+* Females seem to be better debtors as they pay on time more often then males
+and the delay seems to be shorter as well for women
+
+
+# Multivariate Plots Section
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Multivariate_Plots}
+
+data$PAY <- paste(data$PAY_6, data$PAY_5, data$PAY_4, data$PAY_3, data$PAY_2, data$PAY_0, sep = ",")
+
+ggplot(aes(x = AGE, y = LIMIT_BAL, color = default), data = data) + 
+  geom_point()
+
+ggplot(aes(AGE, PAY_AMT, color = default), data = data) +
+  geom_point() +
+  scale_y_continuous(limits = c(0, quantile(data$PAY_AMT, 0.95)))
+
+# ggplot(aes(x = default, y = LIMIT_BAL, color = PAY_0), data = data) +
+#   geom_boxplot() +
+#   scale_fill_brewer(palette = "Spectral") +
+#   scale_y_continuous(limits = c(0, quantile(data$LIMIT_BAL, 0.95)))
+# 
+# ggplot(aes(EDUCATION, fill = default), data = data) +
+#   stat_count() +
+#   facet_wrap(~ MARRIAGE)
+
+
+# Logistic Regression Model
+
+train_data <- data[c(2:7, 26:28)][1:24000,]
+test_data <- data[c(2:7, 26:28)][24001:30000,]
+
+
+model <- glm(default_b ~., family = binomial(link="logit"), data = train_data)
+
+summary(model)
+
+anova(model, test = "Chisq")
+
+# library(pscl)
+# pR2(model)
+
+fitted.results <- predict(model,newdata=test_data, type='response')
+fitted.results <- ifelse(fitted.results > 0.45,1,0)
+
+misClasificError <- mean(fitted.results != test_data$default)
+print(paste('Accuracy',1-misClasificError))
+
+library(ROCR)
+p <- predict(model, test_data, type="response")
+pr <- prediction(p, test_data$default)
+prf <- performance(pr, measure = "tpr", x.measure = "fpr")
+plot(prf)
+
+auc <- performance(pr, measure = "auc")
+auc <- auc@y.values[[1]]
+auc <- round(auc, 4)
+print (paste("Accuracy: ", auc))
+
+```
+
+# Multivariate Analysis
+
+* Observation that customers with higher initial deposit default in less cases 
+than customers with lower deposit was strenghten
+
+* No clear evidence of that previous payments are dependent on age of customers
+
+> As the decision if the customer will default in next month 
+is classification task
+with two possible outputs I tried to model this task
+with a logistic regression model
+(binary logistic regression).
+First I very simply divide dataset into two groups: 
+training data - on which I will train the model and estimate its parameters and
+test data - on which I will test the accuracy of its predictions.
+
+> The majority of features are statistical significant 
+at least at the 0.05 level. But some of the features are not,
+such as PAY_5m, PAY_6m, 
+PAY_8m EDUCATIONhigh school, EDUCATIONuniversity, MARRIAGEmarried, 
+MARRIAGEsingle, AGE.
+
+> According to absolute values of estimates of categorical features 
+it seems that PAY_0 has strong impact on the output of model. 
+The SEX feature increases value of function by 0.1486 for males which means
+that within males is slightly bigger chance of default, if the SEX is female
+then value of function do not change (this relationship is partially reflected
+in intercept).
+The SEX features is in conformity with my previous findings, on the other hand
+within the EDUCATION features it does not seem so. My findigs are that 
+high school customers are more likely to default opposite to 
+university customers whereas in the model 
+it is contrarily. That might points out on that the model is not perfect.
+
+> Model confirm my findigns from previous
+parts such as: the higher initial deposit (LIMIT_BAL) the lower probability of 
+default or males are more likely to default than females. 
+The difference between the null deviance and the residual deviance shows how the
+model is doing against the null model (a model with only the intercept). 
+The wider this gap, the better. Noticeable decrease of Residual Deviance caused
+adding PAY_0 (repayment status) feature into model 
+and also LIMIT_BAL (initial deposit) feature.
+
+> Accuracy 0.8295 represents how precise is model when predicting default status 
+on a new set of data.
+AUC (area under the curve) is another measure of accuracy, typical for 
+classification tasks ranging from 0 to 1 (closer to 1 is better model).
+The ROC is a curve generated by plotting the true positive rate (TPR) against 
+the false positive rate (FPR) at various threshold settings 
+while the AUC is the area under the ROC curve.
+My model shows AUC 0.76 which is better than random guessing (AUC 0.5)
+but in general 0.76 is not very precise and  at this kind of task is demanded
+much better precision thus the model could be significantly improved.
+
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_One}
+
+ggplot(aes(default, LIMIT_BAL), data = data) +
+  geom_boxplot(aes(color = default)) +
+  ggtitle("Initial deposit per default status") +
+  scale_y_continuous(breaks = seq(0, 1000000, 50000))
+
+```
+
+### Description One
+> The first plot shows how initial deposit(LIMIT_BAL) vary between
+default statuses, even though it is simple plot it shows valuable information
+that non defaulted customers have higher median of the deposit compared to 
+customers who defaulted. And this information could be very quickly used by bank
+or other financial institution exposed to credit risk to for example analyze
+minimal level of initial deposit.
+
+### Plot Two
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Two}
+
+ggplot(aes(PAY_0), data = data) +
+  geom_bar(aes(fill = SEX), position = "fill") +
+  scale_x_discrete(limits = c("no consumption", "revolving", "paid", "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m")) +
+  scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+  ggtitle("Proportion of customers per repayment status and sex")  
+
+```
+
+### Description Two
+> I like this one because it nicely develops the finding
+that females are better 
+in repaying their debts within this dataset. Where the proportion in groups
+like no consumption, revolving and paid are clearly bigger within females.
+Also trend seems to prompt that males have longer delays in repayment. 
+This was observed also in different months (PAY_2, PAY_3, ...).
+
+### Plot Three
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Three}
+
+ggplot(aes(PAY_0), data = data) +
+  geom_bar(aes(color = default, fill = default), stat = "count", position = "fill") +
+  scale_x_discrete(limits = c("no consumption", "revolving", "paid", "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m")) +
+  scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+  ggtitle("Proportion of customers per default and repayment status")
+
+```
+
+### Description Three
+> The third plot is very similar to second one, 
+but brings very different insights
+and also offers one interesting thing. The plot shows proportion of defaulted
+customers per repayment status in last month, where is clear that customers with
+longer delay will default with much bigger probability. The interesting 
+thing is that not only in the last month but even in previous months there is
+a big gap in proportion of defaults between one month dealay and 
+two months delay. It is sign that if customer is not able to repay his/her debt 
+until one month delay, the chances of repayment are dramatically dragged down.
+
+------
+
+# Reflection
+
+> A lot of insights are very intuitive and could be expected, nevertheless
+thats the one of the reasons of doing such analysis - to confirm or disprove  
+the ideas, intuitions and expectations about the data. 
+After few projects in Python a was quite comfortable with the language and 
+thus the change of the environment was a bit painfull for me even though 
+I like R and I like how easy is to do the nice plots in it. 
+And also during analysis I struggled a little bit with continuity 
+as I often leave the
+analysis and then return to it after few days and 
+I felt like I lost the connection 
+and I had to remind myself all the previous parts. On the other hand it has 
+also positive side
+that it could bring some new points of view and ideas.
+
+> In future work I would like to develop better model 
+by tuning the one I used -
+as my approach was quite simple (e.g. division of dataset could be done better
+as accuracy is dependent on the manual split to training and test set,
+prepare better features)
+or develop more advanced and more sophisticated
+classification models (neural networks, naive bayes or decision trees). 
+
+
+# Sources
+
+http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
+https://www.kaggle.com/moscolitos/exploratory-data-analysis/code
+https://s3.amazonaws.com/content.udacity-data.com/courses/ud651/diamondsExample_2016-05.html
+https://stackoverflow.com/questions/31561238/lapply-function-loops-on-list-of-lists-r
+http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
+https://www.r-bloggers.com/how-to-perform-a-logistic-regression-in-r/
+http://r-statistics.co/Logistic-Regression-With-R.html
