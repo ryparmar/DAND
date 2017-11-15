@@ -38,18 +38,18 @@ for col in df:
 no_data_points = len(df)
 no_features = len(df.columns)
 
-#sns.set(style="whitegrid")
-#g = sns.factorplot("poi", data=df, kind="count")
-#
-#sns.lmplot("bonus", "total_stock_value", data=df, fit_reg=False, hue="poi")
-#plt.xlabel("bonus")
-#plt.ylabel("total_stock_value")
-#plt.show()
-#
-#sns.lmplot("total_payments", "exercised_stock_options", data=df, fit_reg=False, hue="poi")
-#plt.xlabel("total_payments")
-#plt.ylabel("exercised_stock_options")
-#plt.show()
+sns.set(style="whitegrid")
+g = sns.factorplot("poi", data=df, kind="count")
+
+sns.lmplot("bonus", "total_stock_value", data=df, fit_reg=False, hue="poi")
+plt.xlabel("bonus")
+plt.ylabel("total_stock_value")
+plt.show()
+
+sns.lmplot("total_payments", "exercised_stock_options", data=df, fit_reg=False, hue="poi")
+plt.xlabel("total_payments")
+plt.ylabel("exercised_stock_options")
+plt.show()
 
 #count number of nans within each feature
 nans_f = pd.Series(df.isnull().sum(axis=0), name="nans")
@@ -60,17 +60,17 @@ nans_o = nans_o.sort_values(ascending=False)
 # print the features after droping the outliers
 outliers = df.nlargest(3, "total_payments")
 df = data.drop(["email_address", "other", "loan_advances"], 1)
-df = df.drop(["TOTAL"])
+df = df.drop(["TOTAL", "LOCKHART EUGENE E", "THE TRAVEL AGENCY IN THE PARK"])
 
-#sns.lmplot("bonus", "total_stock_value", data=df, fit_reg=False, hue="poi")
-#plt.xlabel("bonus")
-#plt.ylabel("total_stock_value")
-#plt.show()
-#
-#sns.lmplot("total_payments", "exercised_stock_options", data=df, fit_reg=False, hue="poi")
-#plt.xlabel("total_payments")
-#plt.ylabel("exercised_stock_options")
-#plt.show()
+sns.lmplot("bonus", "total_stock_value", data=df, fit_reg=False, hue="poi")
+plt.xlabel("bonus")
+plt.ylabel("total_stock_value")
+plt.show()
+
+sns.lmplot("total_payments", "exercised_stock_options", data=df, fit_reg=False, hue="poi")
+plt.xlabel("total_payments")
+plt.ylabel("exercised_stock_options")
+plt.show()
 
 #g = sns.PairGrid(df_scaled, hue="poi", palette="Set1", dropna=True).map(plt.scatter)
 #g.savefig("pairplot.png")
@@ -132,6 +132,9 @@ sc1 = pd.DataFrame(selector1.scores_, columns=["anova"], index=df.columns)
 sc1 = sc1.sort_values(by=["anova"], ascending=False)
 sc2 = pd.DataFrame(selector2.scores_, columns=["chi2"], index=df.columns)
 sc2 = sc2.sort_values(by=["chi2"], ascending=False)
+
+sc1
+sc2
 
 # transforming back to original dictionary format
 df = df.fillna("NaN")
