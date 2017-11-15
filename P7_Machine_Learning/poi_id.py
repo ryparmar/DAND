@@ -17,16 +17,19 @@ from tester import dump_classifier_and_data
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi". 
 
-features_list = ['poi', "total_stock_value", "to_poi_ratio", "exercised_stock_options", "bonus"]
+features_list = ['poi', "exercised_stock_options", "total_stock_value", "deferred_income"] #, "salary" , "exercised_stock_options", "to_poi_ratio", "bonus"
                  
-### Load the dictionary containing the dataset
+### Load the dictionary containing the dataset  "bonus", "to_poi_ratio"
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
 
 ### Task 2: Remove outliers
+
+# load the data
 data = pd.DataFrame.from_dict(data_dict, orient="index")
 df = data
 
+# convert all the features except from email_address to floats
 for col in df:
     if col != "email_address":
         df[col] = df[col].apply(float, 1) 
@@ -35,36 +38,39 @@ for col in df:
 no_data_points = len(df)
 no_features = len(df.columns)
 
-sns.set(style="whitegrid")
-g = sns.factorplot("poi", data=df, kind="count")
-
-sns.lmplot("bonus", "total_stock_value", data=df, fit_reg=False, hue="poi")
-plt.xlabel("bonus")
-plt.ylabel("total_stock_value")
-plt.show()
-
-sns.lmplot("total_payments", "exercised_stock_options", data=df, fit_reg=False, hue="poi")
-plt.xlabel("total_payments")
-plt.ylabel("exercised_stock_options")
-plt.show()
+#sns.set(style="whitegrid")
+#g = sns.factorplot("poi", data=df, kind="count")
+#
+#sns.lmplot("bonus", "total_stock_value", data=df, fit_reg=False, hue="poi")
+#plt.xlabel("bonus")
+#plt.ylabel("total_stock_value")
+#plt.show()
+#
+#sns.lmplot("total_payments", "exercised_stock_options", data=df, fit_reg=False, hue="poi")
+#plt.xlabel("total_payments")
+#plt.ylabel("exercised_stock_options")
+#plt.show()
 
 #count number of nans within each feature
 nans_f = pd.Series(df.isnull().sum(axis=0), name="nans")
 nans_f = nans_f.sort_values(ascending=False)
+nans_o = pd.Series(df.isnull().sum(axis=1), name="nans")
+nans_o = nans_o.sort_values(ascending=False)
 
+# print the features after droping the outliers
 outliers = df.nlargest(3, "total_payments")
 df = data.drop(["email_address", "other", "loan_advances"], 1)
 df = df.drop(["TOTAL"])
 
-sns.lmplot("bonus", "total_stock_value", data=df, fit_reg=False, hue="poi")
-plt.xlabel("bonus")
-plt.ylabel("total_stock_value")
-plt.show()
-
-sns.lmplot("total_payments", "exercised_stock_options", data=df, fit_reg=False, hue="poi")
-plt.xlabel("total_payments")
-plt.ylabel("exercised_stock_options")
-plt.show()
+#sns.lmplot("bonus", "total_stock_value", data=df, fit_reg=False, hue="poi")
+#plt.xlabel("bonus")
+#plt.ylabel("total_stock_value")
+#plt.show()
+#
+#sns.lmplot("total_payments", "exercised_stock_options", data=df, fit_reg=False, hue="poi")
+#plt.xlabel("total_payments")
+#plt.ylabel("exercised_stock_options")
+#plt.show()
 
 #g = sns.PairGrid(df_scaled, hue="poi", palette="Set1", dropna=True).map(plt.scatter)
 #g.savefig("pairplot.png")
@@ -106,19 +112,22 @@ df_scaled["poi"] = poi
 
 # feature selection
 from sklearn.feature_selection import SelectKBest, f_classif, chi2
-selector1 = SelectKBest(f_classif, k=10)
-selector2 = SelectKBest(chi2, k=10)
+selector1 = SelectKBest(f_classif)
+selector2 = SelectKBest(chi2)
 top_features1 = selector1.fit_transform(df_scaled, df_scaled["poi"])
 top_features2 = selector2.fit_transform(df_scaled, df_scaled["poi"])
 mask1 = selector1.get_support()
 mask2 = selector2.get_support()
 columns1 = []
 columns2 = []
+
+# creates lists of scores for all the features
 for col in range(len(df.columns)):
     if mask1[col] == True:
         columns1.append(df.columns[col])
     if mask2[col] == True:
         columns2.append(df.columns[col])
+        
 sc1 = pd.DataFrame(selector1.scores_, columns=["anova"], index=df.columns)
 sc1 = sc1.sort_values(by=["anova"], ascending=False)
 sc2 = pd.DataFrame(selector2.scores_, columns=["chi2"], index=df.columns)
@@ -140,7 +149,7 @@ labels, features = targetFeatureSplit(data)
 ### you'll need to use Pipelines. For more info:
 ### http://scikit-learn.org/stable/modules/pipeline.html
 
-# Provided to give you a starting point. Try a variety of classifiers.
+# creation of classificators
 from sklearn.naive_bayes import GaussianNB
 nb = GaussianNB()
 
@@ -187,7 +196,7 @@ print "SVM accuracy: ",  svma_opt.best_estimator_.score(features_test, labels_te
 print "SVM precision score: ",  precision_score(labels_test, svma_opt.predict(features_test))
 print "SVM recall score: ",  recall_score(labels_test, svma_opt.predict(features_test))
 
-parameters_tree = {"min_samples_split" : range(1, 101)}
+parameters_tree = {"min_samples_split" : range(2, 101)}
 dt_opt = GridSearchCV(dt, parameters_tree)
 dt_opt.fit(features_train, labels_train)
 print "decision tree parameters: ", dt_opt.best_params_

@@ -11792,11 +11792,13 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../tools/&quot;</span><span class="p">)</span>
@@ -12013,10 +12015,20 @@ CAoFAGAEhQIAMOJ/ARPFEPXz2BiuAAAAAElFTkSuQmCC
 </div>
 </div>
 
-</div>And below set of features with number of NaNs.
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And below set of features sorted by number of NaNs.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#count number of nans within each feature</span>
@@ -12033,7 +12045,7 @@ CAoFAGAEhQIAMOJ/ARPFEPXz2BiuAAAAAElFTkSuQmCC
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[46]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[2]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -12079,7 +12091,109 @@ Name: nans, dtype: int64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">nans_o</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;nans&quot;</span><span class="p">)</span>
+<span class="n">nans_o</span> <span class="o">=</span> <span class="n">nans_o</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">nans_o</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[3]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>LOCKHART EUGENE E                19
+GRAMM WENDY L                    17
+WROBEL BRUCE                     17
+WODRASKA JOHN                    17
+THE TRAVEL AGENCY IN THE PARK    17
+WHALEY DAVID A                   17
+SCRIMSHAW MATTHEW                17
+CHRISTODOULOU DIOMEDES           16
+CLINE KENNETH W                  16
+GILLIS JOHN                      16
+SAVAGE FRANK                     16
+WAKEHAM JOHN                     16
+CHAN RONNIE                      15
+MEYER JEROME J                   15
+BLAKE JR. NORMAN P               15
+PEREIRA PAULO V. FERRAZ          15
+FUGH JOHN L                      15
+MENDELSOHN JOHN                  15
+LOWRY CHARLES P                  15
+GATHMANN WILLIAM D               15
+YEAP SOON                        15
+URQUHART JOHN A                  15
+WINOKUR JR. HERBERT S            15
+LEMAISTRE CHARLES                14
+BADUM JAMES P                    14
+NOLES JAMES L                    14
+DUNCAN JOHN H                    14
+PRENTICE JAMES                   14
+GRAY RODNEY                      14
+WALTERS GARETH W                 14
+                                 ..
+MCMAHON JEFFREY                   5
+THORN TERENCE H                   5
+MCCONNELL MICHAEL S               5
+MCCLELLAN GEORGE                  5
+TILNEY ELIZABETH A                5
+LAVORATO JOHN J                   5
+KOENIG MARK E                     5
+KEAN STEVEN J                     5
+TOTAL                             5
+WALLS JR ROBERT H                 5
+GLISAN JR BEN F                   5
+GARLAND C KEVIN                   5
+FITZGERALD JAY L                  5
+WHALLEY LAWRENCE G                5
+FALLON JAMES B                    5
+WASAFF GEORGE                     4
+BELDEN TIMOTHY N                  4
+SHARP VICTORIA T                  4
+MULLER MARK S                     4
+RIEKER PAULA H                    4
+RICE KENNETH D                    4
+OLSON CINDY K                     4
+BUY RICHARD B                     4
+HANNON KEVIN P                    4
+PIPER GREGORY F                   3
+DERRICK JR. JAMES V               3
+LAY KENNETH L                     2
+HAEDICKE MARK E                   2
+FREVERT MARK A                    2
+ALLEN PHILLIP K                   2
+Name: nans, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From list above is clear that LOCKHART EUGENE E (all the features are NaNs) and THE TRAVEL AGENCY IN THE PARK (not a person) have no information value and thus I will get rid of them.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="s2">&quot;bonus&quot;</span><span class="p">,</span> <span class="s2">&quot;total_stock_value&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">fit_reg</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;poi&quot;</span><span class="p">)</span>
@@ -12379,7 +12493,7 @@ AKZGWQEAAKZGWQEAAKb2/wH/jQrSe9NSKQAAAABJRU5ErkJggg==
 
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[47]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[4]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -12397,10 +12511,10 @@ Name: bonus, dtype: float64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;TOTAL&quot;</span><span class="p">])</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;TOTAL&quot;</span><span class="p">,</span> <span class="s2">&quot;LOCKHART EUGENE E&quot;</span><span class="p">,</span> <span class="s2">&quot;THE TRAVEL AGENCY IN THE PARK&quot;</span><span class="p">])</span>
 
 <span class="n">sns</span><span class="o">.</span><span class="n">lmplot</span><span class="p">(</span><span class="s2">&quot;bonus&quot;</span><span class="p">,</span> <span class="s2">&quot;total_stock_value&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">fit_reg</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;poi&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;bonus&quot;</span><span class="p">)</span>
@@ -12738,7 +12852,7 @@ HAAAAABJRU5ErkJggg==
 
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[48]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[5]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -12759,7 +12873,7 @@ Name: bonus, dtype: float64</pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Regarding outliers, I removed one clear outlier - TOTAL, where I am 100% sure that I do not want to include into model. 
+<p>Regarding outliers, I removed one clear outliers - TOTAL, LOCKHART EUGENE E and THE TRAVEL AGENCY IN THE PARK where I am 100% sure that I do not want to include into model. 
 Rest of the data were leaved in.</p>
 
 </div>
@@ -12779,11 +12893,11 @@ Rest of the data were leaved in.</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I ended up with these features: <em>bonus</em>, <em>to_poi_ratio</em>, <em>exercised_stock_options</em> and <em>total_stock_value</em>, which proved their ability to discriminate quite well. And it seems completely logical as the used features are the ones with the lower number of NANs. For obtaining those I used SelectKBest function with different scoring functions (chi2, using chi square statistics and f_classif computing ANOVA).</p>
+<p>I ended up with these features: <em>exercised_stock_options</em>, <em>total_stock_value</em> and <em>deferred_income</em> which proved their ability to discriminate quite well. And it seems completely logical as the used features are the ones with the lower number of NANs. For obtaining those I used SelectKBest function with different scoring functions (chi2, using chi square statistics and f_classif computing ANOVA) and then tested characteristics of generated predictions using particular feature.</p>
 <p>Regarding new features:<br>
-I come up with a few new features, first is called simply <em>nans</em> as it counts number of NANs within each person. The hypothesis was that there could be any pattern, such as people with more NANs (there is less information about them) tends to be POI in more cases (hypothesis does not work as I thought, but the feature seems to have some discriminatory power). Second feature is <em>to_poi_ratio</em> which is a proportion of messages sent to POI on total and third feature <em>from_poi_ratio</em> which is proportion of messages received from POI on total. Both are basically calculated out of two of the initial features, so I believe they have stronger information value now. Logic behind those two features is similar, people in intenser communication with POIs are more likely POI too (hypothesis). In the classifier is used only <em>to_poi_ratio</em>.</p>
+I come up with a few new features, first is called simply <em>nans</em> as it counts number of NANs within each person. The hypothesis was that there could be any pattern, such as people with more NANs (there is less information about them) tends to be POI in more cases (hypothesis does not work as I thought, but the feature seems to have some discriminatory power). Second feature is <em>to_poi_ratio</em> which is a proportion of messages sent to POI on total and third feature <em>from_poi_ratio</em> which is proportion of messages received from POI on total. Both are basically calculated out of two of the initial features, so I believe they have stronger information value now. Logic behind those two features is similar, people in intenser communication with POIs are more likely POI too (hypothesis). Between best 10 features according to SeleckKBest were also <em>to_poi_ratio</em> and <em>nans</em> (to_poi_ration [3rd] and nans [7th]), nevertheless after some testing (which might be found below) none of the new features is included in the model.</p>
 <p>Regarding feature selection:<br>
-To get the features which carry the signal I involved selection algorithm - SelectKBest from sklearn library. I created two selectors, one using "chi2" scoring function and one using ANOVA scoring function. Then I compared the top features from both selectors and picked the features. Decision which features to pick was made mainly based on scores but I also tried to involve intuition as well.</p>
+To get the features which carry the signal I involved selection algorithm - SelectKBest from sklearn library. I created two selectors, one using "chi2" scoring function and one using ANOVA scoring function. Then I printed the sorted features by score - so I basically used the SelectKBest only for generating the scores. Decision which features to pick was based on scores and also I examined how the particular feature affect the model characteristics (accuracy, precision, recall). Could be find below.</p>
 <p>Regarding feature scaling:<br>
 But before features were selected, the feature scaling was executed, using MinMaxScaler from sklearn library. Basically there are two kinds of features. The first are ones expressed by monetary units or money and could reach very high numbers (<em>salary</em>, <em>bonus</em>, etc.). The second ones are connected to number of sent or received emails (<em>from_messages</em>, <em>to_messages</em>), so the scale of those numbers is completely different. It is obvious that those kinds of features are incomparable and that is clear reason why perform feature scaling.</p>
 <p>Hand in hand with feature scaling I also perform imputation of NaN values within the dataset. NaN values within all features were imputed by median value (except from <em>director_fees</em> which made me more sense to impute with 0). This caused that those features with more NaNs are wery weak in discriminating wheter the person is POI or not and thus will be less likely included in top k features.</p>
@@ -12793,7 +12907,7 @@ But before features were selected, the feature scaling was executed, using MinMa
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[56]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;email_address&quot;</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">,</span> <span class="s2">&quot;loan_advances&quot;</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
@@ -12841,7 +12955,7 @@ But before features were selected, the feature scaling was executed, using MinMa
 <span class="n">sc2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">selector2</span><span class="o">.</span><span class="n">scores_</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chi2&quot;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 <span class="n">sc2</span> <span class="o">=</span> <span class="n">sc2</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chi2&quot;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
-<span class="n">sc1</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">sc1</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -12852,7 +12966,7 @@ But before features were selected, the feature scaling was executed, using MinMa
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[56]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[12]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -12896,6 +13010,14 @@ But before features were selected, the feature scaling was executed, using MinMa
       <th>restricted_stock</th>
       <td>8.582427</td>
     </tr>
+    <tr>
+      <th>long_term_incentive</th>
+      <td>8.582407</td>
+    </tr>
+    <tr>
+      <th>total_payments</th>
+      <td>8.507453</td>
+    </tr>
   </tbody>
 </table>
 </div>
@@ -12909,10 +13031,10 @@ But before features were selected, the feature scaling was executed, using MinMa
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">sc2</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">sc2</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -12923,7 +13045,7 @@ But before features were selected, the feature scaling was executed, using MinMa
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[55]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[11]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -12967,6 +13089,14 @@ But before features were selected, the feature scaling was executed, using MinMa
       <th>long_term_incentive</th>
       <td>1.151095</td>
     </tr>
+    <tr>
+      <th>shared_receipt_with_poi</th>
+      <td>1.139038</td>
+    </tr>
+    <tr>
+      <th>from_this_person_to_poi</th>
+      <td>0.820472</td>
+    </tr>
   </tbody>
 </table>
 </div>
@@ -12983,6 +13113,57 @@ But before features were selected, the feature scaling was executed, using MinMa
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>I used the SelectKBest to generate scores for all the features and then I printed features sorted by score. The 10 best features are printed above in the tables. Two out of my created features ended up there (to_poi_ratio [3rd] and nans [7th]) which might signalize their significance, nevertheless in the final model none of them was used.</p>
+<p>I avoided to trying all of the possible k's (as a parameter of SelectKBest) and instead of that I tried the best features from the sorted lists above and examined their effect on the model characteristics (accuracy, precision, recall). Based on wheter feature significantly improved the quality of predictions made by model I decided to include/not include the feature in the final model. That examination could be find below.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Below are results of model (<em>Naive Bayes</em>), when different features were used: <br></p>
+<p><em>Baseline:</em> <br>
+[total_stock_value, exercised_stock_options] - Accuracy: 86%, Precision: 45%, Recall: 28% <br></p>
+<p><em>bonus included:</em> <br>
+[total_stock_value, exercised_stock_options, bonus] - Accuracy: 85%, Precision: 44%, Recall: 34% <br>
+resume: positive effect on Recall</p>
+<p><em>to_poi_ratio included:</em> <br>
+[total_stock_value, exercised_stock_options, to_poi_ratio] - Accuracy: 85%, Precision: 42%, Recall: 30% <br>
+resume: minimal effect on Recall</p>
+<p><em>nans included:</em> <br>
+[total_stock_value, exercised_stock_options, nans] - Accuracy: 86%, Precision: 44%, Recall: 28% <br>
+resume: no significant effect</p>
+<p><em>salary included:</em> <br>
+[total_stock_value, exercised_stock_options, salary] - Accuracy: 85%, Precision: 43%, Recall: 28% <br>
+resume: no significant effect</p>
+<p><em>total_payments included:</em> <br>
+[total_stock_value, exercised_stock_options, total_payments] - Accuracy: 85%, Precision: 41%, Recall: 24% <br>
+resume: negative effect on both Recall and Precision</p>
+<p><em>deferred_income included:</em> <br>
+[total_stock_value, exercised_stock_options, deferred_income] - Accuracy: 87%, Precision: 51%, Recall: 39% <br>
+resume: positive effect on both Recall and Precision</p>
+<p><em>director_fees included:</em> <br>
+[total_stock_value, exercised_stock_options, director_fees] - Accuracy: 24%, Precision: 15%, Recall: 100% <br>
+resume: positive effect on Recall, negative on Precision and Accuracy</p>
+<p><em>long_term_incentive included:</em> <br>
+[total_stock_value, exercised_stock_options, long_term_incentive] - Accuracy: 85%, Precision: 43%, Recall: 29% <br>
+resume: no significant effect</p>
+<p><em>both deferred_income and bonus included:</em> <br>
+[total_stock_value, exercised_stock_options, deferred_income, bonus] - Accuracy: 87%, Precision: 49%, Recall: 39% <br></p>
+<p><strong>Final features used in the model: <br>
+[total_stock_value, exercised_stock_options, deferred_income] - Accuracy: 87%, Precision: 51%, Recall: 39% </strong><br></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Algorithm">Algorithm<a class="anchor-link" href="#Algorithm">&#182;</a></h2>
 </div>
 </div>
@@ -12993,14 +13174,14 @@ But before features were selected, the feature scaling was executed, using MinMa
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The comparison was performed within these four algorithms: <em>Adaboost</em>, <em>SVM</em>, <em>Decision tree</em>, and <em>Naive Bayes</em> classifier. Below are best parameters found by GridSearchCV and accuracy of model. Regarding accuracy the best result showed SVM and also very solid performance has Naive Bayes. But generally the differences between accuracy of particular models are not so big 
-(~ 4%). At the end as a final algorithm was chosed Naive Baye from reasons discussed further.</p>
-<p>adaboost optimal parameters:  {'n_estimators': 10, 'learning_rate': 1.5}<br>
-adaboost accuracy:  0.86<br>
-SVM optimal parameters:  {'kernel': 'linear', 'C': 50, 'gamma': 0}<br>
-SVM accuracy:  0.90<br>
-decision tree optimal parameters:  {'min_samples_split': 65}<br>
-decision tree accuracy:  0.84<br>
-naive bayes accuracy:  0.88<br></p>
+(~ 4%). At the end <strong>as a final algorithm was chosed Naive Bayes</strong> from reasons discussed further.</p>
+<p>adaboost optimal parameters:  {'n_estimators': 150, 'learning_rate': 1.5}<br>
+adaboost accuracy:  0.84<br>
+SVM optimal parameters:  {'kernel': 'rbf', 'C': 150, 'gamma': 0}<br>
+SVM accuracy:  0.89<br>
+decision tree optimal parameters:  {'min_samples_split': 25}<br>
+decision tree accuracy:  0.91<br>
+naive bayes accuracy:  0.91<br></p>
 <p>The choice of proper algorithm is very important, nevertheless it is not all. To achieve good results, it is neccesery to choose appropriate parameters of model, what is called <em>parameter optimization</em>. I would say that using model with non optimal parameters is like cutting with blunt knife - you have the appropriate tool, but in inappropriate condition. Using of non optimal parameters could cause serious problems such as overfitting and significantly decrease the power of model. I performed parameter tuning by GridSearchCV, which is automated method of choosing the best parameters out of all possible parameters you define - that is why is it also called exhaustive method.</p>
 
 </div>
@@ -13040,7 +13221,7 @@ decision tree precision score:  1.0<br>
 decision tree recall score:  0.25<br>
 naive bayes precision score:  0.4<br>
 naive bayes recall score:  0.5<br></p>
-<p>Even though SVM showed the best accuracy, it did not end up so good in next evaluations. That was confirmed by running tester.py script which proved that SVM obtained very poor recall score, below 0.3 level. Those are reasons why I chose Naive Bayes as a final algorithm.</p>
+<p>Even though some of the algorithms showed better accuracy compared to Naive Bayes, they did not end up so good in next evaluations. That was confirmed by running tester.py script which proved that those algorithms obtained worse recall/precision scores, below 0.3 level. Those are reasons why <strong>I chose Naive Bayes as a final algorithm</strong>.</p>
 
 </div>
 </div>
